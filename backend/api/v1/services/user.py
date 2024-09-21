@@ -17,7 +17,7 @@ from api.db.database import get_db
 from api.utils.settings import settings
 from api.utils.db_validators import check_model_existence
 from api.v1.models.associations import user_organisation_association
-from api.v1.models import User, Profile, Region, NewsletterSubscriber
+from api.v1.models import User
 from api.v1.models.token_login import TokenLogin
 from api.v1.schemas import user
 from api.v1.schemas import token
@@ -411,17 +411,6 @@ class UserService(Service):
             user.password = self.hash_password(new_password)
             db.commit()
 
-    def get_current_super_admin(
-        self, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
-    ):
-        """Get the current super admin"""
-        user = self.get_current_user(db=db, access_token=token)
-        if not user.is_superadmin:
-            raise HTTPException(
-                status_code=403,
-                detail="You do not have permission to access this resource",
-            )
-        return user
 
     def save_login_token(
         self, db: Session, user: User, token: str, expiration: datetime

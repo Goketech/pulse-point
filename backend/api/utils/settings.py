@@ -35,5 +35,7 @@ class Settings(BaseSettings):
     TWILIO_AUTH_TOKEN: str = config("TWILIO_AUTH_TOKEN")
     TWILIO_PHONE_NUMBER: str = config("TWILIO_PHONE_NUMBER")
 
+    FRONTEND_MAGICLINK_URL: str = config("FRONTEND_MAGICLINK_URL")
+
 
 settings = Settings()

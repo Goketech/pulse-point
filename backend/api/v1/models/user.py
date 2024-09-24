@@ -17,3 +17,6 @@ class User(BaseTableModel):
     is_active = Column(Boolean, server_default=text("true"))
     is_deleted = Column(Boolean, server_default=text("false"))
     is_verified = Column(Boolean, server_default=text("false"))
+
+    token_login = relationship("TokenLogin", back_populates="user")
+    subscription = relationship("UserSubscription", back_populates="user")

@@ -16,7 +16,6 @@ from api.core.dependencies.email.email_sender import send_email
 from api.db.database import get_db
 from api.utils.settings import settings
 from api.utils.db_validators import check_model_existence
-from api.v1.models.associations import user_organisation_association
 from api.v1.models import User
 from api.v1.models.token_login import TokenLogin
 from api.v1.schemas import user
@@ -441,31 +440,5 @@ class UserService(Service):
             random.choices(string.digits, k=6)
         ), datetime.utcnow() + timedelta(minutes=1)
 
-
-    def get_users_by_role(self, db: Session, role_id: str, current_user: User):
-        """Function to get all users by role"""
-        if role_id == "" or role_id is None:
-            raise HTTPException(
-                status_code=400, 
-                detail="Role ID is required"
-            )
-
-        user_roles = db.query(user_organisation_association).filter(user_organisation_association.c.user_id == current_user.id, user_organisation_association.c.role.in_(['admin', 'owner'])).all()
-
-        if len(user_roles) == 0:
-            raise HTTPException(
-                status_code=403, 
-                detail="Permission denied. Admin access required."
-            )
-
-        users = db.query(User).join(user_organisation_association).filter(user_organisation_association.c.role == role_id).all()
-
-        if len(users) == 0:
-            raise HTTPException(
-                status_code=404, 
-                detail="No users found for this role"
-            )
-
-        return users
 
 user_service = UserService()

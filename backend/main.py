@@ -4,14 +4,25 @@ from api.utils.logger import logger
 from api.v1.routes import api_version_one
 from api.utils.settings import settings
 from sqlalchemy.exc import IntegrityError
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, status, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.requests import Request
 from starlette.middleware.sessions import SessionMiddleware
+from scripts.presets import  load_billing_plans_in_db
 
-app = FastAPI(title="PulsePoint API",
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    load_billing_plans_in_db()
+    yield
+
+
+app = FastAPI(
+    lifespan=lifespan,
+    title="PulsePoint API",
     description="PulsePoint API",
     version="1.0.0",)
 
